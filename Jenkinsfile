@@ -1,50 +1,20 @@
 pipeline {
     agent {
-        label 'nodejs-agent'
-    }
-
-    environment {
-        NODE_VERSION = '14'
+        label "${AGENT}"
     }
 
     stages {
-        stage('Checkout') {
+        stage("Continuous Integration / Intégration Continue") {
             steps {
-                git 'https://github.com/AdrienBaptiste/next_CICDCD.git'
+                git branch: "main", url: "https://github.com/fredericBui/html_CICDCD.git"
             }
         }
-
-        stage('Install Dependencies') {
+        stage("Continuous Delivery / Livraison Continue") {
             steps {
-                script {
-                    sh 'nvm install ${NODE_VERSION}'
-                    sh 'nvm use ${NODE_VERSION}'
-
-                    sh 'npm install'
-                }
+                sh "docker build . -t ${DOCKERHUB_USERNAME}/html_cicdcd"
+                sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKER_PASSWORD}" // Créer un PAT sur Docker Hub : https://app.docker.com/settings/personal-access-tokens
+                sh "docker push ${DOCKERHUB_USERNAME}/html_cicdcd"
             }
-        }
-
-        stage('Build') {
-            steps {
-                script {
-                    sh 'npm run build'
-                }
-            }
-        }
-
-        stage('Start Production') {
-            steps {
-                script {
-                    sh 'npm run start'
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            cleanWs()
         }
     }
 }
