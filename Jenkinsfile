@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage("Continuous Integration / Intégration Continue") {
             steps {
-                git branch: "main", url: "https://github.com/AdrienBaptiste/next_CICDCD"
+                git branch: "main", url: "https://github.com/AdrienBaptiste/next_CICDCD.git"
                 sh 'npm install'
             }
         }
